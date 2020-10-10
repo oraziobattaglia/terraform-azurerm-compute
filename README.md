@@ -10,9 +10,9 @@ Deploys:
  - it's possible to add **only one** data disk per vm
  - if application security groups are in use it's possible to attach to the vm nic var.application_security_group_ids application security groups. It's a m to n relationship.
  - vms maybe backed up with the resource azurerm_backup_protected_vm
- - linux vm support a custom script extension to run a bash script
+ - linux vm support a custom script extension to run a bash script after the deploy
  - windows vm support 2 custom script:
-   - to run a powershell script
+   - to run a powershell script after the deploy
    - to join the vm to an Active Directory domain
 
 ## Examples
