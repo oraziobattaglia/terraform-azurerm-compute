@@ -1,6 +1,7 @@
-# Questo modulo introduce le risorse specifiche azurerm_linux_virtual_machine e azurerm_windows_virtual_machine.
-# I data disk vengono creati come oggetti separati e poi attaccati alle vm.
-# Basato sul provider 2.7.0
+# This module is based on the 2 resources azurerm_linux_virtual_machine and azurerm_windows_virtual_machine.
+# Data disks are created as separate resource and attached to the vm.
+# Only 1 data disks per vm is supported.
+# Need provider 2.7.0 or newer.
 
 # Network interface
 resource "azurerm_network_interface" "nic" {
@@ -175,7 +176,6 @@ resource "azurerm_virtual_machine_extension" "vm-windows-cse" {
   type                 = "CustomScriptExtension"
   type_handler_version = "1.9"
 
-  # Funziona solo se il container custom-script-extension ha permessi di lettura da anonymous (access level container)
   settings = <<SETTINGS
       {
         "fileUris": [
@@ -197,7 +197,6 @@ resource "azurerm_virtual_machine_extension" "vm-linux-cse" {
   type = "CustomScript"
   type_handler_version = "2.0"
 
-  # Funziona solo se il container custom-script-extension ha permessi di lettura da anonymous (access level container)
   settings = <<SETTINGS
       {
         "fileUris": [
@@ -219,6 +218,6 @@ resource "azurerm_backup_protected_vm" "rs-protected-vm" {
   source_vm_id = var.is_windows ? azurerm_windows_virtual_machine.vm-windows[count.index].id : azurerm_linux_virtual_machine.vm-linux[count.index].id
   backup_policy_id = var.backup_policy_id
   
-  # Commentata perché sembra non funzionare correttamente l'assegnazione dei tag per questa risorsa, cerca di assegnare i tag ad ogni giro! 
+  # TO TRY! It's seem tags don't work on this resource
   # tags = "${var.tags}"
 }
