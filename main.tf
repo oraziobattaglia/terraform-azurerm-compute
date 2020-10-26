@@ -1,7 +1,42 @@
-# This module is based on the 2 resources azurerm_linux_virtual_machine and azurerm_windows_virtual_machine.
-# Data disks are created as separate resource and attached to the vm.
-# Only 1 data disks per vm is supported.
-# Need provider 2.7.0 or newer.
+# Limits:
+# 1. This module is used to create n vms with m data disks each.
+#    ATTENTION: Data disks cannot be added or removed after the first deploy if the number of vms is more 
+#    than one (the list of data disks will be regenerated), but is still possible to change their sizes.
+
+# Tests:
+# 1. Change data disk 0 size: OK (update in place)
+# 2. Change data disk 1 size: OK (update in place)
+# 3. Change data disk 2 size: OK (update in place)
+# 4. Add data disk 3: KO (bad change in data disks list! NOT DO!)
+# 5. Add a vm at the end of the list virtual_machine_names: OK (all objects created correctly)
+# 6. Delete a vm not last in the list virtual_machine_names: KO (bad change in objects lists! NOT DO!) 
+# 7. Delete the last vm the list virtual_machine_names: OK (remove the right objects)
+
+locals {
+
+  net_ints_2_app_sec_grps = flatten([
+    for net_int in azurerm_network_interface.nic[*].id: [
+      for app_sec_grp in var.application_security_group_ids : {
+        network_interface_id = net_int
+        application_security_group_id = app_sec_grp
+      }
+    ]
+  ])
+
+  # Used to create n data_disk (number of vms * number of data disks)
+  vms_2_data_disks = flatten([
+    for vm in var.virtual_machine_names: [
+      for data_disk in var.data_disks : {
+        data_disk_name    = "${vm}-datadisk-${data_disk.data_disk_lun}"
+        data_disk_sa_type = data_disk.data_disk_sa_type
+        data_disk_size_gb = data_disk.data_disk_size_gb
+        data_disk_lun     = data_disk.data_disk_lun
+        data_disk_caching = data_disk.data_disk_caching
+      }
+    ]
+  ])
+
+}
 
 # Network interface
 resource "azurerm_network_interface" "nic" {
@@ -9,7 +44,6 @@ resource "azurerm_network_interface" "nic" {
   name                          = "${var.virtual_machine_names[count.index]}-nic"
   location                      = var.location
   resource_group_name           = var.resource_group
-  # network_security_group_id     = var.network_security_group_id
   enable_accelerated_networking = var.enable_accelerated_networking 
 
   ip_configuration {
@@ -23,11 +57,18 @@ resource "azurerm_network_interface" "nic" {
   tags = var.tags
 }
 
-# Association nic to asg ids
+// # Association nic to asg ids
+// resource "azurerm_network_interface_application_security_group_association" "nic2asg" {
+//   count                         = var.virtual_machine_instances * length(var.application_security_group_ids)
+//   network_interface_id          = azurerm_network_interface.nic[count.index % var.virtual_machine_instances].id
+//   application_security_group_id = var.application_security_group_ids[floor(count.index / var.virtual_machine_instances)]
+// }
+
+// # Association nic to asg ids
 resource "azurerm_network_interface_application_security_group_association" "nic2asg" {
-  count                         = var.virtual_machine_instances * length(var.application_security_group_ids)
-  network_interface_id          = azurerm_network_interface.nic[count.index % var.virtual_machine_instances].id
-  application_security_group_id = var.application_security_group_ids[floor(count.index / var.virtual_machine_instances)]
+  count                         = length(var.application_security_group_ids) > 0 ? length(local.net_ints_2_app_sec_grps) : 0
+  network_interface_id          = local.net_ints_2_app_sec_grps[count.index].network_interface_id
+  application_security_group_id = local.net_ints_2_app_sec_grps[count.index].application_security_group_id
 }
 
 # Virtual machine Linux
@@ -106,36 +147,60 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
   tags = var.tags
 }
 
-# Create data disk if var.data_disk is true
+// # Create data disk if var.data_disk is true
+// resource "azurerm_managed_disk" "vm-data-disk" {
+//   count                = var.data_disk ? var.virtual_machine_instances : 0
+//   name                 = "${var.virtual_machine_names[count.index]}-datadisk"
+//   location             = var.location
+//   resource_group_name  = var.resource_group
+//   storage_account_type = var.data_sa_type
+//   create_option        = "Empty"
+//   disk_size_gb         = var.data_disk_size_gb
+
+//   tags = var.tags
+// }
+
+# Create optionals data disks
 resource "azurerm_managed_disk" "vm-data-disk" {
-  count                = var.data_disk ? var.virtual_machine_instances : 0
-  name                 = "${var.virtual_machine_names[count.index]}-datadisk"
+  count                = length(local.vms_2_data_disks) > 0 ? length(local.vms_2_data_disks) : 0
+
+  name                 = local.vms_2_data_disks[count.index].data_disk_name
   location             = var.location
   resource_group_name  = var.resource_group
-  storage_account_type = var.data_sa_type
+  storage_account_type = local.vms_2_data_disks[count.index].data_disk_sa_type
   create_option        = "Empty"
-  disk_size_gb         = var.data_disk_size_gb
+  disk_size_gb         = local.vms_2_data_disks[count.index].data_disk_size_gb
 
   tags = var.tags
 }
 
 # Data disk association
 # Linux vm
+// resource "azurerm_virtual_machine_data_disk_attachment" "data-disk2vm-linux" {
+//   count = var.data_disk && !var.is_windows ? var.virtual_machine_instances : 0
+//   managed_disk_id = azurerm_managed_disk.vm-data-disk[count.index].id
+//   virtual_machine_id = azurerm_linux_virtual_machine.vm-linux[count.index].id
+//   lun     = "0"
+//   caching = var.data_disk_caching
+// }
+
+# Data disk association
+# Linux vm
 resource "azurerm_virtual_machine_data_disk_attachment" "data-disk2vm-linux" {
-  count = var.data_disk && !var.is_windows ? var.virtual_machine_instances : 0
+  count = (length(local.vms_2_data_disks) > 0) && !var.is_windows ? length(local.vms_2_data_disks) : 0
   managed_disk_id = azurerm_managed_disk.vm-data-disk[count.index].id
-  virtual_machine_id = azurerm_linux_virtual_machine.vm-linux[count.index].id
-  lun     = "0"
-  caching = var.data_disk_caching
+  virtual_machine_id = azurerm_linux_virtual_machine.vm-linux[floor(count.index / length(var.data_disks))].id
+  lun     = local.vms_2_data_disks[count.index].data_disk_lun
+  caching = local.vms_2_data_disks[count.index].data_disk_caching
 }
 
 # Windows vm
 resource "azurerm_virtual_machine_data_disk_attachment" "data-disk2vm-windows" {
-  count = var.data_disk && var.is_windows ? var.virtual_machine_instances : 0
+  count = (length(local.vms_2_data_disks) > 0) && var.is_windows ? length(local.vms_2_data_disks) : 0
   managed_disk_id = azurerm_managed_disk.vm-data-disk[count.index].id
-  virtual_machine_id = azurerm_windows_virtual_machine.vm-windows[count.index].id
-  lun     = "0"
-  caching = var.data_disk_caching
+  virtual_machine_id = azurerm_windows_virtual_machine.vm-windows[floor(count.index / length(var.data_disks))].id
+  lun     = local.vms_2_data_disks[count.index].data_disk_lun
+  caching = local.vms_2_data_disks[count.index].data_disk_caching
 }
 
 # JsonADDomainExtension extension
@@ -176,6 +241,7 @@ resource "azurerm_virtual_machine_extension" "vm-windows-cse" {
   type                 = "CustomScriptExtension"
   type_handler_version = "1.9"
 
+  # Works only if container custom-script-extension has read permission by anonymous (access level container)
   settings = <<SETTINGS
       {
         "fileUris": [
@@ -197,6 +263,7 @@ resource "azurerm_virtual_machine_extension" "vm-linux-cse" {
   type = "CustomScript"
   type_handler_version = "2.0"
 
+  # Works only if container custom-script-extension has read permission by anonymous (access level container)
   settings = <<SETTINGS
       {
         "fileUris": [

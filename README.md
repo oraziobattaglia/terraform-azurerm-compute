@@ -7,7 +7,7 @@ This Terraform module deploys Virtual Machines in Azure, ideas from official mod
 Deploys:
  - var.virtual_machine_instances number of linux vm or windows vm based on var.is_windows value
  - for each vm add a nic and a os disk
- - it's possible to add **only one** data disk per vm
+ - it's possible to add n data disk per vm based on data_disks list
  - if application security groups are in use it's possible to attach to the vm nic var.application_security_group_ids application security groups. It's a m to n relationship.
  - vms maybe backed up with the resource azurerm_backup_protected_vm
  - linux vm support a custom script extension to run a bash script after the deploy

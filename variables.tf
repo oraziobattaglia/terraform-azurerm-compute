@@ -114,26 +114,15 @@ variable "os_disk_size_gb" {
   default     = 50
 }
 
-variable "data_disk" {
-  type        = bool
-  description = "True to add a data disk"
-  default     = false
-}
-
-variable "data_sa_type" {
-  description = "Data Disk Storage Account type"
-  default     = "Standard_LRS"
-}
-
-variable "data_disk_caching" {
-  description = "Data Disk caching type"
-  default     = "None"
-}
-
-variable "data_disk_size_gb" {
-  type        = number
-  description = "Storage data disk size"
-  default     = 0
+variable "data_disks" {
+  type = list(object({
+    data_disk_sa_type = string
+    data_disk_caching = string
+    data_disk_size_gb = number
+    data_disk_lun     = number
+  }))
+  description = "List of data disk objects"
+  default = []
 }
 
 variable "admin_username" {
@@ -212,16 +201,19 @@ variable "join" {
 variable "windows_domain_name" {
   type        = string
   description = "Name of the windows domain to join to"
+  default     = ""
 }
 
 variable "windows_domain_username" {
   type        = string
   description = "Name of the user with domain join permission"
+  default     = ""
 }
 
 variable "windows_domain_password" {
   type        = string
   description = "Password for the user with domain join permission"
+  default = ""
 }
 
 # Customization variables
@@ -235,6 +227,7 @@ variable "customize" {
 variable "windows_cs_file_uri" {
   type        = string
   description = "Windows custom script file URI"
+  default     = ""
 }
 
 variable "windows_cs_command" {
@@ -247,6 +240,7 @@ variable "windows_cs_command" {
 variable "linux_cs_file_uri" {
   type        = string
   description = "Linux custom script file URI"
+  default     = ""
 }
 
 variable "linux_cs_command" {
