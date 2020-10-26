@@ -48,10 +48,21 @@ module "my_module" {
   admin_username       = var.admin_username
   admin_password       = var.admin_password
 
-  # Data disk
-  data_disk         = true
-  data_sa_type      = "Premium_LRS"
-  data_disk_size_gb = "2048"
+  # Data disks
+  data_disks = [
+    {
+      data_disk_sa_type = "Standard_LRS"
+      data_disk_caching = "None"
+      data_disk_size_gb = 25
+      data_disk_lun     = 0
+    },
+    {
+      data_disk_sa_type = "Standard_LRS"
+      data_disk_caching = "None"
+      data_disk_size_gb = 40
+      data_disk_lun     = 1
+    }
+  ]
 
   # Boot diagnostics
   boot_diagnostics                 = true
