@@ -2,6 +2,9 @@
 
 ## Deploys n vms, linux or windows, based on var.virtual_machine_instances and var.virtual_machine_names
 
+DEPRECATED!
+
+This module use the old resource azurerm_virtual_machine.
 This Terraform module deploys Virtual Machines in Azure, ideas from official module.
 
 Deploys:

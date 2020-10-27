@@ -75,6 +75,18 @@ variable "license_type" {
   default     = "Windows_Server"
 }
 
+variable "delete_os_disk_on_termination" {
+  type        = bool
+  description = "Delete os disk on termination"
+  default     = true
+}
+
+variable "delete_data_disk_on_termination" {
+  type        = bool
+  description = "Delete data disk on termination"
+  default     = true
+}
+
 variable "vm_os_publisher" {
   type        = string
   description = "Vm os publisher"
@@ -100,6 +112,12 @@ variable "storage_account_type" {
   type        = string
   description = "Storage account type"
   default     = "Standard_LRS"
+}
+
+variable "os_create_option" {
+  type        = string
+  description = "Storage os disk create option"
+  default     = "FromImage"
 }
 
 variable "use_custom_os_disk_size" {
@@ -196,10 +214,28 @@ variable "availability_set_enabled" {
   default     = false
 }
 
-variable "availability_set_id" {
+variable "availability_set_name" {
   type        = string
-  description = "Id of the availability set"
+  description = "Name of the availability set"
   default     = ""
+}
+
+variable "availability_set_fault_domains" {
+  type        = number
+  description = "Number of availability set fault domains"
+  default     = 2
+}
+
+variable "availability_set_update_domains" {
+  type        = number
+  description = "Number of availability set update domains"
+  default     = 5
+}
+
+variable "availability_set_managed" {
+  type        = bool
+  description = "True for availability set managed"
+  default     = true
 }
 
 # JsonADDomainExtension extension variables
