@@ -4,6 +4,11 @@
 
 This Terraform module deploys Virtual Machines in Azure, ideas from official module.
 
+Repository and branches facts:
+ - branch fix_old4 is used for releases v0.4.0 and later, this version use the old resource **azurerm_virtual_machine** **DEPRECATED**
+ - branch fix_old5 is used for releases v0.5.1 and later, this version use the new resources **azurerm_linux_virtual_machine** and **azurerm_windows_virtual_machine**, **only one** data disk is allowed **DEPRECATED**
+ - branch main is used for releases v0.6.1 and later, this version permit to have m data disks attached to n vms **CURRENT**
+
 Deploys:
  - var.virtual_machine_instances number of linux vm or windows vm based on var.is_windows value
  - for each vm add a nic and a os disk
