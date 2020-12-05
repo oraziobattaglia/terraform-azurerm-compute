@@ -1,3 +1,22 @@
+## v0.6.3
+
+Features:
+
+ - Added dns_servers variable to specify a list of dns servers for the network interface, default to []
+ - Added enable_ip_forwarding variable to enable ip forwarding for the network interface, default to false
+
+## v0.6.2
+
+Fixes:
+
+ - Fix README.md
+
+## v0.6.1
+
+Fixes:
+
+ - Fix README.md
+
 ## v0.6.0
 
 Features:

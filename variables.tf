@@ -31,6 +31,18 @@ variable "enable_accelerated_networking" {
   default     = false
 }
 
+variable "enable_ip_forwarding" {
+  type        = bool
+  description = "Should IP Forwarding be enabled?"
+  default     = false
+}
+
+variable "dns_servers" {
+  type        = list(string)
+  description = "A list of IP Addresses defining the DNS Servers which should be used for this Network Interface"
+  default     = []
+}
+
 variable "subnet_id" {
   type        = string
   description = "The subnet id where to create vms"
