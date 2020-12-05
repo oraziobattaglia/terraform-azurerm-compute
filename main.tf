@@ -14,6 +14,7 @@
 
 locals {
 
+  # Used to create nic to asg associations
   net_ints_2_app_sec_grps = flatten([
     for net_int in azurerm_network_interface.nic[*].id: [
       for app_sec_grp in var.application_security_group_ids : {
@@ -61,18 +62,18 @@ resource "azurerm_network_interface" "nic" {
   tags = var.tags
 }
 
-// # Association nic to asg ids
-// resource "azurerm_network_interface_application_security_group_association" "nic2asg" {
-//   count                         = var.virtual_machine_instances * length(var.application_security_group_ids)
-//   network_interface_id          = azurerm_network_interface.nic[count.index % var.virtual_machine_instances].id
-//   application_security_group_id = var.application_security_group_ids[floor(count.index / var.virtual_machine_instances)]
-// }
-
-// # Association nic to asg ids
+# Association nics to asg ids
 resource "azurerm_network_interface_application_security_group_association" "nic2asg" {
   count                         = length(var.application_security_group_ids) > 0 ? length(local.net_ints_2_app_sec_grps) : 0
   network_interface_id          = local.net_ints_2_app_sec_grps[count.index].network_interface_id
   application_security_group_id = local.net_ints_2_app_sec_grps[count.index].application_security_group_id
+}
+
+# Association nics to nsg id
+resource "azurerm_network_interface_security_group_association" "nic2nsg" {
+  count                     = var.use_network_security_group ? var.virtual_machine_instances : 0
+  network_interface_id      = azurerm_network_interface.nic[count.index].id
+  network_security_group_id = var.network_security_group_id
 }
 
 # Virtual machine Linux
@@ -81,7 +82,6 @@ resource "azurerm_linux_virtual_machine" "vm-linux" {
   name                  = "${var.virtual_machine_names[count.index]}-vm"
   location              = var.location
   resource_group_name   = var.resource_group
-  # availability_set_id   = var.availability_set_enabled ? join("", azurerm_availability_set.vm-avset.*.id) : null
   availability_set_id   = var.availability_set_enabled ? var.availability_set_id : null
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
   size               = var.vm_size
@@ -118,7 +118,6 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
   name                  = "${var.virtual_machine_names[count.index]}-vm"
   location              = var.location
   resource_group_name   = var.resource_group
-  # availability_set_id   = var.availability_set_enabled ? join("", azurerm_availability_set.vm-avset.*.id) : null
   availability_set_id   = var.availability_set_enabled ? var.availability_set_id : null
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
   size                  = var.vm_size
@@ -151,19 +150,6 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
   tags = var.tags
 }
 
-// # Create data disk if var.data_disk is true
-// resource "azurerm_managed_disk" "vm-data-disk" {
-//   count                = var.data_disk ? var.virtual_machine_instances : 0
-//   name                 = "${var.virtual_machine_names[count.index]}-datadisk"
-//   location             = var.location
-//   resource_group_name  = var.resource_group
-//   storage_account_type = var.data_sa_type
-//   create_option        = "Empty"
-//   disk_size_gb         = var.data_disk_size_gb
-
-//   tags = var.tags
-// }
-
 # Create optionals data disks
 resource "azurerm_managed_disk" "vm-data-disk" {
   count                = length(local.vms_2_data_disks) > 0 ? length(local.vms_2_data_disks) : 0
@@ -177,16 +163,6 @@ resource "azurerm_managed_disk" "vm-data-disk" {
 
   tags = var.tags
 }
-
-# Data disk association
-# Linux vm
-// resource "azurerm_virtual_machine_data_disk_attachment" "data-disk2vm-linux" {
-//   count = var.data_disk && !var.is_windows ? var.virtual_machine_instances : 0
-//   managed_disk_id = azurerm_managed_disk.vm-data-disk[count.index].id
-//   virtual_machine_id = azurerm_linux_virtual_machine.vm-linux[count.index].id
-//   lun     = "0"
-//   caching = var.data_disk_caching
-// }
 
 # Data disk association
 # Linux vm

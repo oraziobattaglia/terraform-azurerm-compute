@@ -19,9 +19,15 @@ variable "virtual_machine_names" {
   description = "A list of Azure Virtual Machine Names"
 }
 
+variable "use_network_security_group" {
+  type        = bool
+  description = "True if you want to specify a network security group to attach to NIC"
+  default     = false
+}
+
 variable "network_security_group_id" {
   type        = string
-  description = "Network security group attached to vm nic"
+  description = "Network security group attached to vms nic"
   default     = ""
 }
 

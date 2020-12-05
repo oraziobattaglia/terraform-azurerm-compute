@@ -1,3 +1,9 @@
+## v0.6.4
+
+Features:
+
+ - Added the possibility to specify a NSG to attach to vms NICs
+
 ## v0.6.3
 
 Features:
