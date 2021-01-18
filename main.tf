@@ -28,7 +28,7 @@ locals {
   vms_2_data_disks = flatten([
     for vm in var.virtual_machine_names: [
       for data_disk in var.data_disks : {
-        data_disk_name    = "${vm}-datadisk-${data_disk.data_disk_lun}"
+        data_disk_name    = coalesce(data_disk.data_disk_name,"${vm}-datadisk-${data_disk.data_disk_lun}")
         data_disk_sa_type = data_disk.data_disk_sa_type
         data_disk_size_gb = data_disk.data_disk_size_gb
         data_disk_lun     = data_disk.data_disk_lun
