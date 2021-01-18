@@ -134,6 +134,7 @@ variable "os_disk_size_gb" {
 
 variable "data_disks" {
   type = list(object({
+    data_disk_name    = string
     data_disk_sa_type = string
     data_disk_caching = string
     data_disk_size_gb = number
