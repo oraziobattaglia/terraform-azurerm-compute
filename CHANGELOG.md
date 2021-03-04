@@ -1,3 +1,9 @@
+## v0.6.5
+
+Features:
+
+ - Added the possibility to specify to use the availability zones, the vms and relevant data disks will be deployed in availability_zones_number zones, default to 3. The first vm and its data disks will be deployed on availability zone 1, the second vm and its data disks will be deployed on availability zone 2 and so on
+
 ## v0.6.4
 
 Features:

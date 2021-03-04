@@ -1,0 +1,34 @@
+
+5 vms with 3 disks
+
+number_of_zones = 3
+
+count.index % availability_zones_number
+
+0 vm1	0 mod 3 = 0 (+1)		
+1 vm2   1 mod 3 = 1 (+1)
+2 vm3	2 mod 3 = 2 (+1)	
+3 vm4	3 mod 3 = 0 (+1)
+4 vm5	4 mod 3 = 1 (+1)
+
+(count.index/var.data_disks) % availability_zones_number
+
+0 vm1-disk1	    0/3=0 mod 3 = 0(+1)
+1 vm1-disk2	    1/3=0 mod 3 = 0(+1)
+2 vm1-disk3	    2/3=0 mod 3 = 0(+1)
+
+3 vm2-disk1	    3/3=1 mod 3 = 1(+1)
+4 vm2-disk2	    4/3=1 mod 3 = 1(+1)
+5 vm2-disk3	    5/3=1 mod 3 = 1(+1)
+
+6 vm3-disk1	    6/3=2 mod 3 = 2(+1)
+7 vm3-disk2	    7/3=2 mod 3 = 2(+1)
+8 vm3-disk3	    8/3=2 mod 3 = 2(+1)
+
+9 vm4-disk1	    9/3=3 mod 3 = 0(+1)
+10 vm4-disk2    10/3=3 mod 3 = 0(+1)
+11 vm4-disk3	11/3=3 mod 3 = 0(+1)
+
+12 vm5-disk1	12/3=4 mod 3 = 1(+1)
+13 vm5-disk2	13/3=4 mod 3 = 1(+1)
+14 vm5-disk3	14/3=4 mod 3 = 1(+1)
