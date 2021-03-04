@@ -13,12 +13,13 @@ Deploys:
  - var.virtual_machine_instances number of linux vm or windows vm based on var.is_windows value
  - for each vm add a nic and a os disk
  - it's possible to add n data disk per vm based on data_disks list
- - if application security groups are in use it's possible to attach to the vm nic var.application_security_group_ids application security groups. It's a m to n relationship.
+ - if application security groups are in use it's possible to attach to the vm nic var.application_security_group_ids application security groups. It's a m to n relationship
  - vms maybe backed up with the resource azurerm_backup_protected_vm
  - linux vm support a custom script extension to run a bash script after the deploy
  - windows vm support 2 custom script:
    - to run a powershell script after the deploy
    - to join the vm to an Active Directory domain
+ - it's possible to use availability zones: the vms and relevant data disks will be deployed in availability_zones_number zones, default to 3. The first vm and its data disks will be deployed on availability zone 1, the second vm and its data disks will be deployed on availability zone 2 and so on 
 
 ## Examples
 
@@ -37,7 +38,12 @@ module "my_module" {
 
   availability_set_enabled = true
   availability_set_id      = var.azurerm_availability_set_id
-  
+
+  # It's possible to use availability zones: the first vm and its data disks will be deployed on availability zone 1, the
+  # second vm and its data disks will be deployed on availability zone 2 and so on.
+  availability_zones_enabled = true
+  availability_zones_number = 3 # Default to 3
+
   # It's a list
   application_security_group_ids = var.application_security_group_ids
 

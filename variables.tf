@@ -196,7 +196,7 @@ variable "backup_policy_id" {
   default     = ""
 }
 
-# Availability_set variables
+# Availability set variables
 variable "availability_set_enabled" {
   type        = bool
   description = "True to enable availability set"
@@ -207,6 +207,19 @@ variable "availability_set_id" {
   type        = string
   description = "Id of the availability set"
   default     = ""
+}
+
+# Availability zones variables
+variable "availability_zones_enabled" {
+  type        = bool
+  description = "True to enable use of availability zones"
+  default     = false
+}
+
+variable "availability_zones_number" {
+  type        = number
+  description = "Number of availability zones"
+  default     = 3
 }
 
 # JsonADDomainExtension extension variables

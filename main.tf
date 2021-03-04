@@ -109,6 +109,7 @@ resource "azurerm_linux_virtual_machine" "vm-linux" {
     storage_account_uri = var.boot_diagnostics ? var.storage_account_boot_diagnostics : ""
   }
   
+  zone = var.availability_zones_enabled ? (count.index % var.availability_zones_number) + 1 : ""
   tags = var.tags
 }
 
@@ -147,6 +148,7 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
     storage_account_uri = var.boot_diagnostics ? var.storage_account_boot_diagnostics : ""
   }
 
+  zone = var.availability_zones_enabled ? (count.index % var.availability_zones_number) + 1 : ""
   tags = var.tags
 }
 
@@ -161,6 +163,7 @@ resource "azurerm_managed_disk" "vm-data-disk" {
   create_option        = "Empty"
   disk_size_gb         = local.vms_2_data_disks[count.index].data_disk_size_gb
 
+  zones = var.availability_zones_enabled ? [((floor(count.index / length(var.data_disks))) % var.availability_zones_number) + 1] : []
   tags = var.tags
 }
 
