@@ -1,3 +1,9 @@
+## v0.6.6
+
+Features:
+
+ - Changed zone attribute of azurerm_managed_disk to be compatible with provider >= 3.x.x
+
 ## v0.6.5
 
 Features:
