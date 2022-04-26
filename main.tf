@@ -163,7 +163,8 @@ resource "azurerm_managed_disk" "vm-data-disk" {
   create_option        = "Empty"
   disk_size_gb         = local.vms_2_data_disks[count.index].data_disk_size_gb
 
-  zones = var.availability_zones_enabled ? [((floor(count.index / length(var.data_disks))) % var.availability_zones_number) + 1] : []
+  zone = var.availability_zones_enabled ? ((floor(count.index / length(var.data_disks))) % var.availability_zones_number) + 1 : ""
+
   tags = var.tags
 }
 
