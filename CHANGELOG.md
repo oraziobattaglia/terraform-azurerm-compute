@@ -1,3 +1,9 @@
+## v0.6.7
+
+Fixes:
+
+ - Changed default public_ip_address_id value from "" to null to be compatible with provider >= 3.66.0
+
 ## v0.6.6
 
 Features:
