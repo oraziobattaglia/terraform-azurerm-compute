@@ -56,7 +56,7 @@ resource "azurerm_network_interface" "nic" {
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = var.private_ip_address_allocation
     private_ip_address            = length(var.private_ip_addresses) > 0 ? var.private_ip_addresses[count.index] : ""
-    public_ip_address_id          = length(var.public_ip_addresses) > 0 ? var.public_ip_addresses[count.index] : ""
+    public_ip_address_id          = length(var.public_ip_addresses) > 0 ? var.public_ip_addresses[count.index] : null
   }
 
   tags = var.tags
