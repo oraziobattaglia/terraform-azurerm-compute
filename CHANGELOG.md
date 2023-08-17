@@ -1,3 +1,9 @@
+## v0.6.8
+
+Features:
+
+ - Added output network_interface_data to collect interfaces data
+
 ## v0.6.7
 
 Fixes:

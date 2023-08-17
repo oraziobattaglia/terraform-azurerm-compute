@@ -37,6 +37,16 @@ locals {
     ]
   ])
 
+  # Create an array where each element contains interface data
+  net_ints_data = flatten([
+    for net_int in azurerm_network_interface.nic[*]: [
+      {
+        network_interface_id = net_int.id
+        ip_conf_name = net_int.ip_configuration[0].name
+      }
+    ]
+  ])  
+
 }
 
 # Network interface
