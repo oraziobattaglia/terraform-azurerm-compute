@@ -260,6 +260,13 @@ variable "windows_domain_password" {
   default = ""
 }
 
+# AADLoginForWindows extension variables
+variable "aad_login_for_windows" {
+  type        = bool
+  description = "True to join vm to Azure Active Directory"
+  default     = false
+}
+
 # Customization variables
 variable "customize" {
   type        = bool

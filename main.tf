@@ -235,6 +235,26 @@ resource "azurerm_virtual_machine_extension" "vm-windows-joinext" {
   tags = var.tags
 }
 
+# JsonADDomainExtension extension
+resource "azurerm_virtual_machine_extension" "vm-windows-aadjoinext" {
+  count               = var.aad_login_for_windows && var.is_windows ? var.virtual_machine_instances : 0
+  name                = "${var.virtual_machine_names[count.index]}-aadjoinext"
+  virtual_machine_id  = azurerm_windows_virtual_machine.vm-windows[count.index].id
+
+  publisher            = "Microsoft.Azure.ActiveDirectory"
+  type                 = "AADLoginForWindows"
+  type_handler_version = "1.0"
+  auto_upgrade_minor_version = true
+
+  settings = <<SETTINGS
+    {
+      "mdmId": ""
+    }
+  SETTINGS
+
+  tags = var.tags
+}
+
 # Custom script extension
 resource "azurerm_virtual_machine_extension" "vm-windows-cse" {
   count               = var.customize && var.is_windows ? var.virtual_machine_instances : 0
