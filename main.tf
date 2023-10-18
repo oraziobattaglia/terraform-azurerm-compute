@@ -147,6 +147,16 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
     storage_account_type = var.storage_account_type
   }
 
+  dynamic "identity" {
+
+    for_each = var.identity_type == "" ? toset([]) : toset([1])
+
+    content {
+        type = var.identity_type
+        identity_ids = var.identity_ids
+    }
+  }   
+
   computer_name  = var.virtual_machine_names[count.index]
 
   admin_username = var.admin_username

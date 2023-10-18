@@ -165,6 +165,19 @@ variable "storage_account_boot_diagnostics" {
   default     = ""
 }
 
+# Identity variables
+variable "identity_type" {
+  type        = string
+  description = "Specifies the type of Managed Service Identity. Possible values are SystemAssigned, UserAssigned, (SystemAssigned, UserAssigned)"
+  default     = ""
+}
+
+variable "identity_ids" {
+  type        = list(string)
+  description = "Specifies a list of User Assigned Managed Identity IDs"
+  default     = []
+}
+
 variable "tags" {
   type        = any
   description = "Tags"
