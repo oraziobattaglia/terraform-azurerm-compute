@@ -25,6 +25,7 @@ Deploys:
 
 ```hcl
 
+# Linux vm example
 module "my_module" {
   source = "oraziobattaglia/compute/azurerm"
 
@@ -88,6 +89,40 @@ module "my_module" {
   customize = true
   linux_cs_file_uri = "http://myserver.com/scripts/customize_linux.bash"
   linux_cs_command = "bash customize_linux.bash"
+}
+
+# Windows vm example
+module "my_module" {
+  source = "oraziobattaglia/compute/azurerm"
+
+  location                        = var.location
+  resource_group                  = var.resource_group
+  virtual_machine_instances       = "1"
+  virtual_machine_names           = ["my_vm"]
+  subnet_id                       = var.subnet_id
+  private_ip_address_allocation   = "Dynamic"
+
+  is_windows           = true
+
+  vm_size              = "Standard_B2ms"
+  storage_account_type = "StandardSSD_LRS"
+
+  vm_os_publisher      = "microsoftwindowsdesktop"
+  vm_os_offer          = "windows-11"
+  vm_os_sku            = "win11-22h2-pro"
+  vm_os_version        = "latest"
+
+  admin_username       = var.admin_username
+  admin_password       = var.admin_password
+
+  boot_diagnostics = false
+  backup_enabled = false
+  customize = false
+  join = false
+
+  identity_type = "SystemAssigned"
+  aad_login_for_windows = true
+
 }
 
 ```

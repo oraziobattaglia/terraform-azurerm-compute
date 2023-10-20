@@ -1,3 +1,11 @@
+## v0.6.9
+
+Features:
+
+For the Windows vms:
+ - Added vars identity_type, identity_ids to configure Managed Service Identity
+ - Added var aad_login_for_windows to join the vms to Azure Active Directory
+
 ## v0.6.8
 
 Features:
