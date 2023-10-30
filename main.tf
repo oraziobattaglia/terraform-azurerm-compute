@@ -235,7 +235,7 @@ resource "azurerm_virtual_machine_extension" "vm-windows-joinext" {
   tags = var.tags
 }
 
-# JsonADDomainExtension extension
+# AADLoginForWindows extension
 resource "azurerm_virtual_machine_extension" "vm-windows-aadjoinext" {
   count               = var.aad_login_for_windows && var.is_windows ? var.virtual_machine_instances : 0
   name                = "${var.virtual_machine_names[count.index]}-aadjoinext"
