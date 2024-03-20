@@ -226,7 +226,7 @@ variable "availability_set_id" {
 variable "availability_zones_enabled" {
   type        = bool
   description = "True to enable use of availability zones"
-  default     = false
+  default     = true
 }
 
 variable "availability_zones_number" {

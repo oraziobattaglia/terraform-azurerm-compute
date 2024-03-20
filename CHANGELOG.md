@@ -1,3 +1,8 @@
+## v0.6.10
+
+Fixes:
+ - Changed availability_zones_enabled default value to true
+
 ## v0.6.9
 
 Features:
