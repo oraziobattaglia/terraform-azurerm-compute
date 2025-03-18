@@ -9,7 +9,7 @@ resource "azurerm_network_interface" "nic" {
   location                      = var.location
   resource_group_name           = var.resource_group
   # network_security_group_id     = var.network_security_group_id
-  enable_accelerated_networking = var.enable_accelerated_networking 
+  accelerated_networking_enabled = var.enable_accelerated_networking 
 
   ip_configuration {
     name                          = "${var.virtual_machine_names[count.index]}-ip"
