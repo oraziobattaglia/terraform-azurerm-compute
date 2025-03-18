@@ -1,3 +1,8 @@
+## v0.6.11
+
+Fixes:
+ - Changed param names to be compatible with azure provider 4.x.x
+
 ## v0.6.10
 
 Fixes:
