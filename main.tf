@@ -265,6 +265,20 @@ resource "azurerm_virtual_machine_extension" "vm-windows-aadjoinext" {
   tags = var.tags
 }
 
+# AADSSHLoginForLinux extension
+resource "azurerm_virtual_machine_extension" "vm-linux-aadsshloginext" {
+  count = var.aad_ssh_login_for_linux && !var.is_windows ? var.virtual_machine_instances : 0
+  name = "${var.virtual_machine_names[count.index]}-aadsshloginext"
+
+  virtual_machine_id = azurerm_linux_virtual_machine.vm-linux[count.index].id
+  publisher = "Microsoft.Azure.ActiveDirectory"
+  type = "AADSSHLoginForLinux"
+  type_handler_version = "1.0"
+  auto_upgrade_minor_version = true
+
+  tags = var.tags
+}
+
 # Custom script extension
 resource "azurerm_virtual_machine_extension" "vm-windows-cse" {
   count               = var.customize && var.is_windows ? var.virtual_machine_instances : 0

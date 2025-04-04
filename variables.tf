@@ -299,3 +299,10 @@ variable "linux_cs_command" {
   description = "Linux custom script command to execute"
   default     = "bash customize_linux.bash"
 }
+
+# AADSSHLoginForLinux extension variables
+variable "aad_ssh_login_for_linux" {
+  type        = bool
+  description = "True to enable Azure Active Directory ssh login for linux"
+  default     = false
+}
