@@ -1,3 +1,8 @@
+## v0.6.12
+
+Features:
+ - Added vars identity_type, identity_ids to configure Managed Service Identity for Linux vms
+
 ## v0.6.11
 
 Fixes:

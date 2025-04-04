@@ -108,7 +108,17 @@ resource "azurerm_linux_virtual_machine" "vm-linux" {
     caching              = "ReadWrite"
     storage_account_type = var.storage_account_type
   }
-  
+
+  dynamic "identity" {
+
+    for_each = var.identity_type == "" ? toset([]) : toset([1])
+
+    content {
+        type = var.identity_type
+        identity_ids = var.identity_ids
+    }
+  }
+
   computer_name  = var.virtual_machine_names[count.index]
 
   disable_password_authentication = false
@@ -155,7 +165,7 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
         type = var.identity_type
         identity_ids = var.identity_ids
     }
-  }   
+  }
 
   computer_name  = var.virtual_machine_names[count.index]
 
