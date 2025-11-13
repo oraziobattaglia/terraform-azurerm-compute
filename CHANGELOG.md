@@ -1,3 +1,9 @@
+## v0.6.13
+
+Features:
+ - Added AADSSHLoginForLinux extension
+ - Added var license_type for vms
+
 ## v0.6.12
 
 Features:

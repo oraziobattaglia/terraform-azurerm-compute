@@ -94,7 +94,8 @@ resource "azurerm_linux_virtual_machine" "vm-linux" {
   resource_group_name   = var.resource_group
   availability_set_id   = var.availability_set_enabled ? var.availability_set_id : null
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
-  size               = var.vm_size
+  size                  = var.vm_size
+  license_type          = var.license_type
 
   source_image_reference {
     publisher = var.vm_os_publisher
