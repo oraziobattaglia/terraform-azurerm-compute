@@ -90,7 +90,7 @@ variable "vm_size" {
 variable "license_type" {
   type        = string
   description = "Specifies the License Type for this Virtual Machine"
-  default     = ""
+  default     = null
 }
 
 variable "vm_os_publisher" {
