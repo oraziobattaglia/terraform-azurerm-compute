@@ -95,7 +95,7 @@ resource "azurerm_linux_virtual_machine" "vm-linux" {
   availability_set_id   = var.availability_set_enabled ? var.availability_set_id : null
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
   size                  = var.vm_size
-  license_type          = var.license_type
+  license_type          = var.license_type == "" ? null : var.license_type
 
   source_image_reference {
     publisher = var.vm_os_publisher
@@ -143,7 +143,7 @@ resource "azurerm_windows_virtual_machine" "vm-windows" {
   availability_set_id   = var.availability_set_enabled ? var.availability_set_id : null
   network_interface_ids = [azurerm_network_interface.nic[count.index].id]
   size                  = var.vm_size
-  license_type          = var.license_type
+  license_type          = var.license_type == "" ? null : var.license_type
 
   source_image_reference {
     publisher = var.vm_os_publisher
